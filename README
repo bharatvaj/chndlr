@@ -1,0 +1,46 @@
+chndlr
+======
+
+chndlr is a simple, fast, and suckless replacement for xdg-open. It determines the appropriate application to open a file or URL based on user-defined rules in config.h.
+
+Features
+--------
+* Minimal and fast
+* No unnecessary dependencies
+* Proven config.h configuration
+* Works on UNIX-like systems
+
+Installation
+------------
+
+	$ make
+	$ sudo make install
+
+Usage
+-----
+
+	$ chndlr music.mp3
+	$ chndlr https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+config.h
+--------
+chndlr uses config.h for configuration,
+
+	static const Pair pairs[] = {
+		// regex        action
+		...
+		{ "\\.mp3$",    "st -e mplayer %s" },
+		{ "(https://github.com)/([^/]+)/([^/]+)/actions",
+						"gh run list --repo %1%2/%3/%4" }
+	}
+
+In action, %1 captures the first group (), %2 the second and so on, until 9.
+%s substites the whole text.
+
+To know more the about capture group sytax, see regex(7).
+
+Credits
+-------
+Forked from soap.
+https://github.com/FRIGN/soap
+
