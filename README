@@ -1,7 +1,9 @@
 chndlr
 ======
 
-chndlr is a simple, fast, and suckless replacement for xdg-open. It determines the appropriate application to open a file or URL based on user-defined rules in config.h.
+chndlr is a simple, fast, and suckless replacement for xdg-open.
+It determines the appropriate application to open a file or URL based on
+user-defined rules in config.h.
 
 Features
 --------
@@ -26,18 +28,41 @@ config.h
 --------
 chndlr uses config.h for configuration,
 
-	static const Pair pairs[] = {
-		// regex        action
-		...
-		{ "\\.mp3$",    "st -e mplayer %s" },
-		{ "(https://github.com)/([^/]+)/([^/]+)/actions",
-						"gh run list --repo %1%2/%3/%4" }
-	}
+Entries to `pairs` can be added with easy to use macros P and WEB_PREFIX,
 
-In action, %1 captures the first group (), %2 the second and so on, until 9.
-%s substites the whole text.
+	static const Pair pairs[] = {
+
+		P( "\\.mp3", "st", "-e", "mplayer", "%s");		
+
+		P( WEB_PREFIX("github.com") "/([^/]+)/([^/]+)/actions",
+						"gh run list --repo %1/%2/%3" )
+		...
+
+	};
+
+For the input,
+
+	$ chndlr 'https://www.github.com/bharatvaj/chndlr'
+
+We get,
+
+	%1 - https://www.github.com
+	%2 - bharatvaj
+	%3 - chndlr
+
+	%s - https://www.github.com/bharatvaj/chndlr
+
+%0-%9 and %s are available for substituion.
 
 To know more the about capture group sytax, see regex(7).
+
+chndlr uses 'execvp()' instead of 'system()' to speed up launching processes.
+This means that the following would NOT work.
+
+	/* config.h */
+
+	P( "\\.gif$",
+		"wget", "-O", "/tmp/tmp.gif %s && gifview -a /tmp/tmp_gifview.gif")
 
 Credits
 -------
